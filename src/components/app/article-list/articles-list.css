@@ -1,0 +1,7 @@
+.not-articles {
+    display: none;
+}
+
+.not-articles.active {
+    display: flex;
+}
