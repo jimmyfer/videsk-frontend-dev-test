@@ -1,0 +1,21 @@
+<div class="p-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold">Lista de artículos</h1>
+    <div class="grid gap-4 md:grid-cols-4 mt-5">
+      <input
+        type="text"
+        placeholder="Buscar artículos..."
+        class="search-input flex h-10 w-full text-sm rounded-md border-input px-3 py-2 text-base bg-sf-background disabled:opacity-50"
+      />
+      <ui-dropdown class="articles-quantity"></ui-dropdown>
+      <ui-dropdown class="articles-sort-by"></ui-dropdown>
+      <ui-dropdown class="articles-order"></ui-dropdown>
+    </div>
+  </div>
+  <div
+    class="articles-list grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+  ></div>
+  <div class="not-articles justify-center items-center h-96">
+    <h1 class="text-3xl animate-pulse">No se ha encontrado ningún artículo.</h1>
+  </div>
+</div>
