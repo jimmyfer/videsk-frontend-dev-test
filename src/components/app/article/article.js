@@ -24,8 +24,13 @@ export default class ArticleComponent extends HTMLElement {
     this.shadowRoot
       .querySelector(".article")
       .addEventListener("click", () => this.showFullContent());
+
+    this.imageElement.onload = () => {
+      const loaderArticle = this.shadowRoot.querySelector(".loader-article");
+      loaderArticle.classList.add("hidden");
+    };
   }
-  
+
   get title() {
     return this.getAttribute("title");
   }
@@ -40,6 +45,7 @@ export default class ArticleComponent extends HTMLElement {
   }
 
   set image(value) {
+    this.imageElement.classList.remove("hidden");
     this.setAttribute("image", value);
     this.imageElement.src = value;
   }
@@ -66,7 +72,7 @@ export default class ArticleComponent extends HTMLElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if(oldValue != newValue) {
+    if (oldValue != newValue) {
       this[name] = newValue;
     }
   }
