@@ -121,6 +121,7 @@ export default class ArticlesListComponent extends HTMLElement {
    * Método para cargar los artículos que se desean mostrar.
    */
   async loadArticles() {
+    this.articles = this.emptyArticles();
     this.articles = await articleService.fetchAllArticles(this.httpParams);
   }
 
@@ -149,6 +150,14 @@ export default class ArticlesListComponent extends HTMLElement {
     } else {
       this.avaibleArticlesToggle(false);
     }
+  }
+
+  emptyArticles() {
+    const emptyArticles = [];
+    for (let index = 0; index < this.httpParams.limit; index++) {
+      emptyArticles.push({});
+    }
+    return emptyArticles;
   }
 
   /**
