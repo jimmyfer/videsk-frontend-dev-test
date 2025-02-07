@@ -2,6 +2,7 @@ import mainCss from "../../../main.css";
 import css from "./articles-list.css";
 import html from "./articles-list.html";
 import articleService from "../../../services/article-service";
+import authorService from "../../../services/author-service";
 
 export default class ArticlesListComponent extends HTMLElement {
   constructor() {
@@ -130,6 +131,11 @@ export default class ArticlesListComponent extends HTMLElement {
     }
   }
 
+  /**
+   * Genera una lista de artículos vacíos según el límite establecido en los parámetros HTTP.
+   *
+   * @returns {Array<Object>} Una lista de objetos vacíos que representan artículos vacíos.
+   */
   emptyArticles() {
     const emptyArticles = [];
     for (let index = 0; index < this.httpParams.limit; index++) {
@@ -225,6 +231,12 @@ export default class ArticlesListComponent extends HTMLElement {
     articleItem.addEventListener("click", () =>
       this.openArticleDialog(articleItem, article)
     );
+
+    articleItem.addEventListener("author-click", () =>
+    {
+      this.openAuthorDialog(article)
+    }
+    );
   }
 
   /**
@@ -240,6 +252,11 @@ export default class ArticlesListComponent extends HTMLElement {
     articleItem.company = article.company;
     articleItem.description = article.description;
     articleItem.content = article.content;
+
+    authorService.fetchAuthorById(article.author).then((author) => {
+      articleItem.author = author.name;
+    });
+
     return articleItem;
   }
 
@@ -279,6 +296,14 @@ export default class ArticlesListComponent extends HTMLElement {
     dialogArticleItem.description = article.description;
     dialogArticleItem.content = article.content;
 
+    authorService.fetchAuthorById(article.author).then((author) => {
+      dialogArticleItem.author = author.name;
+      dialogArticleItem.authorElement.addEventListener("click", (event) => {
+        event.stopPropagation();
+        this.openAuthorDialog(article);
+      });
+    });
+
     slotContent.appendChild(dialogArticleItem);
     return slotContent;
   }
@@ -294,5 +319,48 @@ export default class ArticlesListComponent extends HTMLElement {
       // Habilita el scroll del body
       document.body.classList.remove("no-scroll");
     });
+  }
+
+  /**
+   * Abre un diálogo con los detalles del autor.
+   * @param {Object} article Los datos del artículo.
+   */
+  openAuthorDialog(article) {
+    const authorDialog = document.createElement("ui-dialog");
+
+    const slotContent = this.createAuthorDialogContent(article);
+
+    authorDialog.appendChild(slotContent);
+
+    this.shadowRoot.appendChild(authorDialog);
+
+    // Deshabilitar el scroll del body
+    document.body.classList.add("no-scroll");
+
+    this.setupDialogCloseListener(authorDialog);
+  }
+
+  /**
+   * Crea el contenido del diálogo del autor.
+   * @param {Object} article Los datos del artículo.
+   * @returns {HTMLElement} El contenido del diálogo.
+   */
+  createAuthorDialogContent(article) {
+
+    const slotContent = document.createElement("div");
+
+    const authorComponent = document.createElement("app-author");
+
+    authorService.fetchAuthorById(article.author).then((author) => {
+      authorComponent.name = author.name;
+      authorComponent.avatar = author.avatar;
+      authorComponent.birthdate = author.birthdate;
+      authorComponent.bio = author.bio;
+    });
+
+    slotContent.setAttribute("slot", "content");
+
+    slotContent.appendChild(authorComponent);
+    return slotContent;
   }
 }

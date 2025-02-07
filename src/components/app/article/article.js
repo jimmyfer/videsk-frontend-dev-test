@@ -50,6 +50,16 @@ export default class ArticleComponent extends HTMLElement {
     if(this.descriptionElement) this.descriptionElement.textContent = value;
   }
 
+  get author() {
+    return this.getAttribute("author");
+  }
+
+  set author(value) {
+    this.setAttribute("author", value);
+    this.toggleAuthorLoader(false);
+    if(this.authorElement) this.authorElement.textContent = value;
+  }
+
   get content() {
     return this.getAttribute("content");
   }
@@ -59,10 +69,6 @@ export default class ArticleComponent extends HTMLElement {
     if(this.contentElement) this.contentElement.textContent = value;
   }
 
-  static get observedAttributes() {
-    return ["title", "image", "company", "description", "content", "mode"];
-  }
-
   set mode(value) {
     this.setAttribute("mode", value);
     this.renderArticle();
@@ -70,6 +76,10 @@ export default class ArticleComponent extends HTMLElement {
 
   get mode() {
     return this.getAttribute("mode");
+  }
+
+  static get observedAttributes() {
+    return ["title", "image", "company", "description", "author", "content", "mode"];
   }
 
   renderArticle() {
@@ -88,7 +98,10 @@ export default class ArticleComponent extends HTMLElement {
     this.imageElement = this.shadowRoot.querySelector(".image");
     this.companyElement = this.shadowRoot.querySelector(".company");
     this.descriptionElement = this.shadowRoot.querySelector(".description");
+    this.authorElement = this.shadowRoot.querySelector(".author");
     this.contentElement = this.shadowRoot.querySelector(".full-content");
+
+    this.toggleAuthorLoader(true);
     
     if (this.mode === "card") {
       this.imageElement.onload = () => {
@@ -96,7 +109,33 @@ export default class ArticleComponent extends HTMLElement {
         loaderArticle.classList.add("hidden");
       };
     }
+
+    this.authorElement.addEventListener("click", (event) => {
+      event.stopPropagation();
+      this.dispatchEvent(
+        new CustomEvent("author-click")
+      );
+    });
   }
+
+  /**
+ * Método para mostrar u ocultar el loader del autor y mostrar el contenido del autor.
+ * @param {boolean} isLoading - Indica si el loader debe mostrarse (true) u ocultarse (false).
+ */
+toggleAuthorLoader(isLoading) {
+  const authorLoader = this.shadowRoot.querySelector(".author-loader");
+  const authorElement = this.shadowRoot.querySelector(".author");
+
+  if (authorLoader && authorElement) {
+    if (isLoading) {
+      authorLoader.classList.remove("hidden");
+      authorElement.classList.add("hidden");
+    } else {
+      authorLoader.classList.add("hidden");
+      authorElement.classList.remove("hidden");
+    }
+  }
+}
 
   attributeChangedCallback(name, oldValue, newValue) {
     if (oldValue != newValue) {
