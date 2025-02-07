@@ -1,6 +1,7 @@
 import mainCss from "../../../main.css";
 import css from "./article.css";
-import html from "./article.html";
+import htmlNormal from "./article-normal.html";
+import htmlCard from "./article-card.html";
 
 export default class ArticleComponent extends HTMLElement {
   constructor() {
@@ -8,27 +9,6 @@ export default class ArticleComponent extends HTMLElement {
 
     this.attachShadow({ mode: "open" });
 
-    const template = document.createElement("template");
-    template.innerHTML = `
-            <style>${mainCss.toString()}${css.toString()}</style>
-            ${html}
-        `;
-
-    this.shadowRoot.appendChild(template.content.cloneNode(true));
-
-    this.titleElement = this.shadowRoot.querySelector(".title");
-    this.imageElement = this.shadowRoot.querySelector(".image");
-    this.companyElement = this.shadowRoot.querySelector(".company");
-    this.descriptionElement = this.shadowRoot.querySelector(".description");
-
-    this.shadowRoot
-      .querySelector(".article")
-      .addEventListener("click", () => this.showFullContent());
-
-    this.imageElement.onload = () => {
-      const loaderArticle = this.shadowRoot.querySelector(".loader-article");
-      loaderArticle.classList.add("hidden");
-    };
   }
 
   get title() {
@@ -37,7 +17,7 @@ export default class ArticleComponent extends HTMLElement {
 
   set title(value) {
     this.setAttribute("title", value);
-    this.titleElement.textContent = value;
+    if(this.titleElement) this.titleElement.textContent = value;
   }
 
   get image() {
@@ -45,9 +25,11 @@ export default class ArticleComponent extends HTMLElement {
   }
 
   set image(value) {
-    this.imageElement.classList.remove("hidden");
     this.setAttribute("image", value);
-    this.imageElement.src = value;
+    if(this.imageElement) {
+      this.imageElement.classList.remove("hidden");
+      this.imageElement.src = value;
+    }
   }
 
   get company() {
@@ -56,7 +38,7 @@ export default class ArticleComponent extends HTMLElement {
 
   set company(value) {
     this.setAttribute("company", value);
-    this.companyElement.textContent = value;
+    if(this.companyElement) this.companyElement.textContent = value;
   }
 
   get description() {
@@ -65,10 +47,55 @@ export default class ArticleComponent extends HTMLElement {
 
   set description(value) {
     this.setAttribute("description", value);
-    this.descriptionElement.textContent = value;
+    if(this.descriptionElement) this.descriptionElement.textContent = value;
   }
+
+  get content() {
+    return this.getAttribute("content");
+  }
+
+  set content(value) {
+    this.setAttribute("content", value);
+    if(this.contentElement) this.contentElement.textContent = value;
+  }
+
   static get observedAttributes() {
-    return ["title", "image", "company", "description"];
+    return ["title", "image", "company", "description", "content", "mode"];
+  }
+
+  set mode(value) {
+    this.setAttribute("mode", value);
+    this.renderArticle();
+  }
+
+  get mode() {
+    return this.getAttribute("mode");
+  }
+
+  renderArticle() {
+    const html = this.mode === "card" ? htmlCard : htmlNormal;
+
+    const template = document.createElement("template");
+    template.innerHTML = `
+      <style>${mainCss.toString()}${css.toString()}</style>
+      ${html}
+    `;
+
+    this.shadowRoot.innerHTML = "";
+    this.shadowRoot.appendChild(template.content.cloneNode(true));
+
+    this.titleElement = this.shadowRoot.querySelector(".title");
+    this.imageElement = this.shadowRoot.querySelector(".image");
+    this.companyElement = this.shadowRoot.querySelector(".company");
+    this.descriptionElement = this.shadowRoot.querySelector(".description");
+    this.contentElement = this.shadowRoot.querySelector(".full-content");
+    
+    if (this.mode === "card") {
+      this.imageElement.onload = () => {
+        const loaderArticle = this.shadowRoot.querySelector(".loader-article");
+        loaderArticle.classList.add("hidden");
+      };
+    }
   }
 
   attributeChangedCallback(name, oldValue, newValue) {

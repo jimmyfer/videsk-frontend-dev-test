@@ -44,7 +44,6 @@ export default class ArticlesListComponent extends HTMLElement {
 
   set articles(value) {
     this.setAttribute("articles", JSON.stringify(value));
-    this.renderArticles();
   }
 
   get articles() {
@@ -125,30 +124,9 @@ export default class ArticlesListComponent extends HTMLElement {
     this.articles = await articleService.fetchAllArticles(this.httpParams);
   }
 
-  attributeChangedCallback(name) {
-    if (name === "articles") {
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === "articles" && oldValue != newValue) {
       this.renderArticles();
-    }
-  }
-
-  /**
-   * Método para renderizar los artículos que se desean mostrar.
-   */
-  renderArticles() {
-    this.articlesListElement.innerHTML = "";
-    const articles = this.articles || [];
-    if (articles.length) {
-      this.avaibleArticlesToggle(true);
-      articles.forEach((article) => {
-        const articleItem = document.createElement("app-article");
-        articleItem.title = article.title;
-        if(article.image) articleItem.image = article.image;
-        articleItem.company = article.company;
-        articleItem.description = article.description;
-        this.articlesListElement.appendChild(articleItem);
-      });
-    } else {
-      this.avaibleArticlesToggle(false);
     }
   }
 
@@ -165,11 +143,11 @@ export default class ArticlesListComponent extends HTMLElement {
    * @param {boolean} existArticles La variable que determine si encontraron artículos o no.
    */
   avaibleArticlesToggle(existArticles) {
-    const avaibleArticles = this.shadowRoot.querySelector('.not-articles');
-    if(existArticles) {
-      avaibleArticles.classList.remove('active');
+    const avaibleArticles = this.shadowRoot.querySelector(".not-articles");
+    if (existArticles) {
+      avaibleArticles.classList.remove("active");
     } else {
-      avaibleArticles.classList.add('active');
+      avaibleArticles.classList.add("active");
     }
   }
 
@@ -184,13 +162,13 @@ export default class ArticlesListComponent extends HTMLElement {
   }
 
   /**
- * Función debounce que retrasa la ejecución de una función hasta que
- * haya pasado un cierto tiempo sin que se vuelva a llamar.
- * 
- * @param {Function} func La función que se desea ejecutar después del retraso.
- * @param {number} delay El tiempo de retraso en milisegundos antes de ejecutar la función.
- * @returns {Function} Una nueva función que ejecutará `func` después del retraso especificado.
- */
+   * Función debounce que retrasa la ejecución de una función hasta que
+   * haya pasado un cierto tiempo sin que se vuelva a llamar.
+   *
+   * @param {Function} func La función que se desea ejecutar después del retraso.
+   * @param {number} delay El tiempo de retraso en milisegundos antes de ejecutar la función.
+   * @returns {Function} Una nueva función que ejecutará `func` después del retraso especificado.
+   */
   debounce(func, delay) {
     let debounceTimer;
     return function () {
@@ -199,5 +177,122 @@ export default class ArticlesListComponent extends HTMLElement {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => func.apply(context, args), delay);
     };
+  }
+
+  /**
+   * Método para renderizar los artículos que se desean mostrar.
+   */
+  renderArticles() {
+    this.clearArticlesList();
+
+    const articles = this.articles || [];
+    if (articles.length) {
+      this.toggleAvailableArticlesMessage(true);
+      articles.forEach((article) => this.renderArticle(article));
+    } else {
+      this.toggleAvailableArticlesMessage(false);
+    }
+  }
+
+  /**
+   * Limpia la lista de artículos.
+   */
+  clearArticlesList() {
+    this.articlesListElement.innerHTML = "";
+  }
+
+  /**
+   * Muestra u oculta el mensaje de "No hay artículos disponibles".
+   * @param {boolean} showMessage Indica si se debe mostrar el mensaje.
+   */
+  toggleAvailableArticlesMessage(showMessage) {
+    const notArticlesElement = this.shadowRoot.querySelector(".not-articles");
+    if (showMessage) {
+      notArticlesElement.classList.remove("active");
+    } else {
+      notArticlesElement.classList.add("active");
+    }
+  }
+
+  /**
+   * Renderiza un artículo individual.
+   * @param {Object} article El artículo a renderizar.
+   */
+  renderArticle(article) {
+    const articleItem = this.createArticleItem(article);
+    this.articlesListElement.appendChild(articleItem);
+
+    articleItem.addEventListener("click", () =>
+      this.openArticleDialog(articleItem, article)
+    );
+  }
+
+  /**
+   * Crea un elemento de artículo.
+   * @param {Object} article El artículo a representar.
+   * @returns {HTMLElement} El elemento del artículo creado.
+   */
+  createArticleItem(article) {
+    const articleItem = document.createElement("app-article");
+    articleItem.mode = "card";
+    articleItem.title = article.title;
+    if (article.image) articleItem.image = article.image;
+    articleItem.company = article.company;
+    articleItem.description = article.description;
+    articleItem.content = article.content;
+    return articleItem;
+  }
+
+  /**
+   * Abre un diálogo con los detalles del artículo.
+   * @param {HTMLElement} articleItem El elemento del artículo que se hizo clic.
+   * @param {Object} article Los datos del artículo.
+   */
+  openArticleDialog(articleItem, article) {
+    const articleDialog = document.createElement("ui-dialog");
+    const slotContent = this.createDialogContent(articleItem, article);
+    articleDialog.appendChild(slotContent);
+
+    this.shadowRoot.appendChild(articleDialog);
+
+    // Deshabilita el scroll del body
+    document.body.classList.add("no-scroll");
+
+    this.setupDialogCloseListener(articleDialog);
+  }
+
+  /**
+   * Crea el contenido del diálogo.
+   * @param {HTMLElement} articleItem El elemento del artículo que se hizo clic.
+   * @param {Object} article Los datos del artículo.
+   * @returns {HTMLElement} El contenido del diálogo.
+   */
+  createDialogContent(articleItem, article) {
+    const slotContent = document.createElement("div");
+    slotContent.setAttribute("slot", "content");
+
+    const dialogArticleItem = articleItem.cloneNode(true);
+    dialogArticleItem.mode = "normal";
+    dialogArticleItem.title = article.title;
+    if (article.image) dialogArticleItem.image = article.image;
+    dialogArticleItem.company = article.company;
+    dialogArticleItem.description = article.description;
+    dialogArticleItem.content = article.content;
+
+    slotContent.appendChild(dialogArticleItem);
+    return slotContent;
+  }
+
+  /**
+   * Configura el listener para cerrar el diálogo.
+   * @param {HTMLElement} dialog El diálogo al que se le agregará el listener.
+   */
+  setupDialogCloseListener(dialog) {
+    dialog.addEventListener("close", () => {
+      dialog.remove();
+
+      // Habilita el scroll del body
+      document.body.classList.remove("no-scroll");
+    });
   }
 }
