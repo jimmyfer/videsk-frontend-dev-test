@@ -142,7 +142,7 @@ export default class ArticlesListComponent extends HTMLElement {
       articles.forEach((article) => {
         const articleItem = document.createElement("app-article");
         articleItem.title = article.title;
-        articleItem.image = article.image;
+        if(article.image) articleItem.image = article.image;
         articleItem.company = article.company;
         articleItem.description = article.description;
         this.articlesListElement.appendChild(articleItem);
