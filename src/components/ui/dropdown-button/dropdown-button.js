@@ -19,21 +19,23 @@ export default class DropdownButtonComponent extends HTMLElement {
     // Propiedad para determinar cual de todos los componentes esta activo
     this.activeDropdown = false;
 
-    const dropdownButton = this.shadowRoot.querySelector('.dropdown-button');
-    const dropdownContainer = this.shadowRoot.querySelector('.dropdown');
+    const dropdownButton = this.shadowRoot.querySelector(".dropdown-button");
+    const dropdownContainer = this.shadowRoot.querySelector(".dropdown");
 
     // Escuchamos el evento click para expandir el menú
-    dropdownButton.addEventListener('click', () => {
+    dropdownButton.addEventListener("click", () => {
       this.dropdownToggle();
     });
 
     // Escuchamos el evento click de elementos externos para cerrar el menú
-    document.addEventListener('click', (event) => {
-
-      // con activeDropdown nos aseguramos que tambien se cierre el menú al 
+    document.addEventListener("click", (event) => {
+      // con activeDropdown nos aseguramos que tambien se cierre el menú al
       // hacer click en otras instancias de DropdownButtonComponent
-      if (!this.shadowRoot.contains(event.target) && this.activeDropdown != true) {
-        dropdownContainer.classList.remove('active');
+      if (
+        !this.shadowRoot.contains(event.target) &&
+        this.activeDropdown != true
+      ) {
+        dropdownContainer.classList.remove("active");
       } else {
         this.activeDropdown = false;
       }
@@ -64,14 +66,15 @@ export default class DropdownButtonComponent extends HTMLElement {
   renderOptions() {
     const dropdownContent = this.shadowRoot.querySelector(".dropdown-content");
     dropdownContent.innerHTML = "";
+    const dropdownMenu = document.createElement("ul");
     this.options.forEach((option) => {
-      const dropdownOption = document.createElement("a");
+      const dropdownOption = document.createElement("li");
       dropdownOption.classList.add("option");
-      dropdownOption.setAttribute("href", "#");
       dropdownOption.setAttribute("data-value", JSON.stringify(option));
       dropdownOption.innerText = option.label;
-      dropdownContent.appendChild(dropdownOption);
+      dropdownMenu.appendChild(dropdownOption);
     });
+    dropdownContent.appendChild(dropdownMenu);
 
     this.shadowRoot.querySelectorAll(".option").forEach((option) => {
       option.addEventListener("click", () => this.handleOptionClick(option));
@@ -90,14 +93,14 @@ export default class DropdownButtonComponent extends HTMLElement {
    * Método para esconder/mostrar el menú.
    */
   dropdownToggle() {
-    const dropdownContainer = this.shadowRoot.querySelector('.dropdown');
+    const dropdownContainer = this.shadowRoot.querySelector(".dropdown");
     this.activeDropdown = !this.activeDropdown;
-    dropdownContainer.classList.toggle('active');
+    dropdownContainer.classList.toggle("active");
   }
 
   /**
    * Método para manejar el click en las opciones del menú.
-   * @param {object} option 
+   * @param {object} option
    */
   handleOptionClick(option) {
     if (this._activeOption) {

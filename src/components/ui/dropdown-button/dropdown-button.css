@@ -17,13 +17,13 @@
   visibility: hidden;
 }
 
-.dropdown-content > a {
+.dropdown-content > ul > li {
   color: hsl(var(--primary-text));
   border-radius: 0.5rem;
   padding: 5px 10px;
 }
 
-.dropdown-content > a:hover {
+.dropdown-content > ul > li:hover {
   background-color: hsl(var(--surface-background));
 }
 
