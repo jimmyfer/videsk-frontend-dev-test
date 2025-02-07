@@ -9,6 +9,7 @@
     --radius: 0.75rem;
     --border: 223, 84%, 5%;
     --primary-text: 0, 0%, 98%;
+    --primery-text-darkest: 240 5% 64.9%;
   }
 }
 
@@ -24,6 +25,10 @@
 
   .text-primary {
     color: hsl(var(--primary-text));
+  }
+
+  .text-primary-darkest {
+    color: hsl(var(--primery-text-darkest));
   }
 
   .border-color {
@@ -44,4 +49,8 @@
   body {
     @apply bg-background text-primary;
   }
+}
+
+.no-scroll {
+  overflow: hidden; /* Deshabilita el scroll */
 }
