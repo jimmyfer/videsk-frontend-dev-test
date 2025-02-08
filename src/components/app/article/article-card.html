@@ -1,0 +1,38 @@
+<div class="article-card relative shadow-sm overflow-hidden cursor-pointer bg-sf-background border-radius border border-color transition-transform duration-300 hover:scale-105">
+  <div class="loader-article absolute z-10 w-full h-full bg-inherit">
+    <div class="animate-pulse">
+      <div class="aspect-video overflow-hidden opacity-50 flex items-center justify-center w-full h-full rounded-sm bg-gray-800">
+        <svg class="w-10 h-10 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+            <path d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z"/>
+        </svg>
+      </div>
+      <div class="w-full p-4">
+        <div class="h-2.5 opacity-25 bg-gray-600 rounded-full w-48 mt-2 mb-3"></div>
+        <div class="h-2 opacity-25 bg-gray-400 rounded-full w-32 mb-5"></div>
+        <div class="h-2 opacity-25 bg-gray-600 rounded-full max-w-[320px] mb-2.5"></div>
+        <div class="h-2 opacity-25 bg-gray-400 rounded-full max-w-[360px] mb-2.5"></div>
+        <div class="h-2 opacity-25 bg-gray-600 rounded-full max-w-[340px] mb-2.5"></div>
+        <div class="h-2 opacity-25 bg-gray-400 rounded-full max-w-[320px] mb-6"></div>
+        <div class="h-2 opacity-25 bg-gray-400 rounded-full w-32"></div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="aspect-video overflow-hidden">
+      <img class="image h-full w-full object-cover hidden" />
+    </div>
+    <div class="flex flex-col space-y-1.5 p-4">
+      <h2
+        class="title line-clamp-2 text-xl font-semibold tracking-tight"
+      ></h2>
+      <p class="company text-sm text-gray-400"></p>
+    </div>
+    <div class="p-4 pt-0">
+      <p class="description line-clamp-3 text-sm text-gray-400"></p>
+      <div class="author-loader w-full mt-4 animate-pulse">
+        <div class="h-2 opacity-25 bg-gray-400 rounded-full w-32"></div>
+      </div>
+      <p class="author hidden mt-4 text-sm font-medium cursor-pointer hover:underline hover:underline-offset-1"></p>
+    </div>
+  </div>
+</div>

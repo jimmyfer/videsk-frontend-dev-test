@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 6%;
+    --surface-background: 240 3.7% 15.9%;
+    --radius: 0.75rem;
+    --border: 223, 84%, 5%;
+    --primary-text: 0, 0%, 98%;
+    --primery-text-darkest: 240 5% 64.9%;
+  }
+}
+
+@layer utilities {
+
+  .bg-background {
+    background-color: hsl(var(--background));
+  }
+
+  .bg-sf-background {
+    background-color: hsl(var(--surface-background));
+  }
+
+  .text-primary {
+    color: hsl(var(--primary-text));
+  }
+
+  .text-primary-darkest {
+    color: hsl(var(--primery-text-darkest));
+  }
+
+  .border-color {
+    border-color: hsl(var(--surface-background));
+  }
+
+  .border-radius {
+    border-radius: var(--radius);
+  }
+
+  .bg-primary {
+    background-color: hsl(var(--primary));
+  }
+  
+}
+
+@layer base {
+  body {
+    @apply bg-background text-primary;
+  }
+}
+
+.no-scroll {
+  overflow: hidden; /* Deshabilita el scroll */
+}
